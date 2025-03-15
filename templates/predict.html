@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+
+    <h2 class="text-center">Make a Prediction</h2>
+
+    <form id="predictForm" class="text-center">
+        <input type="text" id="features" class="form-control" placeholder="Enter values comma-separated" required>
+        <button type="submit" class="btn btn-success mt-3">Predict</button>
+    </form>
+
+    <p id="predictionResult" class="mt-3 text-center"></p>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-primary">Go Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById("predictForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let inputValues = document.getElementById("features").value.split(",");
+            
+            let response = await fetch("/predict", { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({ "features": inputValues }) 
+            });
+
+            let result = await response.json();
+
+            if (result.prediction) {
+                document.getElementById("predictionResult").innerText = "Prediction: " + result.prediction;
+            } else {
+                document.getElementById("predictionResult").innerText = "Error: " + result.error;
+            }
+        });
+    </script>
+
+</body>
+</html>
