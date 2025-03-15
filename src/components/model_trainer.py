@@ -14,15 +14,12 @@ class ModelTrainer:
         model = RandomForestRegressor(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
 
-        
         predictions = model.predict(X_test)
         performance = r2_score(y_test, predictions)  
 
-        
         model_path = os.path.join(MODEL_FOLDER, "model.pkl")
         joblib.dump(model, model_path)
 
-        
         if os.path.exists(model_path):
             print("Model saved successfully at:", model_path)
         else:
