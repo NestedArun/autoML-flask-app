@@ -1,8 +1,8 @@
 flask
 pandas
-#numpy
+numpy
 scikit-learn
 catboost
 xgboost
 joblib
-gunicorn
+
