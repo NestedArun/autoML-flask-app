@@ -10,6 +10,13 @@
 
     <h2 class="text-center">Make a Prediction</h2>
 
+    <!-- ✅ Display Best Model Name -->
+    <div id="modelInfo" class="alert alert-info text-center" style="display: none;">
+        <h4>Model in Use:</h4>
+        <p><strong>Best Model:</strong> <span id="bestModel"></span></p>
+        <p><strong>Score:</strong> <span id="modelScore"></span></p>
+    </div>
+
     <form id="predictForm" class="text-center">
         <input type="text" id="features" class="form-control" placeholder="Enter values comma-separated" required>
         <button type="submit" class="btn btn-success mt-3">Predict</button>
@@ -22,6 +29,23 @@
     </div>
 
     <script>
+        async function fetchBestModel() {
+            try {
+                let response = await fetch("/get_best_model"); 
+                let data = await response.json();
+
+                if (data.best_model) {
+                    document.getElementById("bestModel").innerText = data.best_model;
+                    document.getElementById("modelScore").innerText = data.score;
+                    document.getElementById("modelInfo").style.display = "block"; 
+                }
+            } catch (error) {
+                console.error("Error fetching model:", error);
+            }
+        }
+        
+        fetchBestModel(); 
+
         document.getElementById("predictForm").addEventListener("submit", async function(event) {
             event.preventDefault();
             let inputValues = document.getElementById("features").value.split(",");
@@ -35,6 +59,7 @@
             let result = await response.json();
 
             if (result.prediction) {
+
                 document.getElementById("predictionResult").innerText = "Prediction: " + result.prediction;
             } else {
                 document.getElementById("predictionResult").innerText = "Error: " + result.error;
