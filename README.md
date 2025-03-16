@@ -25,8 +25,12 @@ This web application uses the concepts of Automated Machine Learning (AutoML). U
 
 ## Requirements
 - Python 3.x
-- Flask
+- flask
+- pandas
+- numpy
 - scikit-learn
+- xgboost
+- catboost
 - joblib
 
 ## Installation
