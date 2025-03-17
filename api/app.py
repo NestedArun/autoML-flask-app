@@ -102,7 +102,7 @@ def predict():
         input_transformed = preprocessor.transform(input_df)
         prediction = model.predict(input_transformed)
 
-        label_mapping = {0: "N", 1: "Y"} 
+        label_mapping = {0: "Fail", 1: "Pass"} 
         prediction_labels = [label_mapping[pred] for pred in prediction]
         return jsonify({"prediction": prediction_labels})
 
