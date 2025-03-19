@@ -102,9 +102,13 @@ def predict():
         input_transformed = preprocessor.transform(input_df)
         prediction = model.predict(input_transformed)
 
-        label_mapping = {0: "Fail", 1: "Pass"} 
-        prediction_labels = [label_mapping[pred] for pred in prediction]
-        return jsonify({"prediction": prediction_labels})
+        if model._estimator_type == "classifier":
+            label_mapping = {0: "Fail", 1: "Pass"}
+            prediction_labels = [label_mapping.get(pred, str(pred)) for pred in prediction]  # Safe mapping
+            return jsonify({"prediction": prediction_labels})
+        else:  
+             return jsonify({"prediction": float(prediction[0])})  # Convert numpy output to float
+
 
     except Exception as e:
         print(f"Error during prediction: {str(e)}")
