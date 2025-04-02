@@ -44,9 +44,15 @@ class DataTransformation:
         X_transformed = preprocessor.fit_transform(X)
 
         if y.dtype == 'object' or y.nunique() <= 10:
-            label_encoder = LabelEncoder()
-            y = label_encoder.fit_transform(y)
-            joblib.dump(label_encoder, "api/models/label_encoder.pkl")  # Save label encoder
+            unique_labels = sorted(y.unique())
+            label_mapping = {label: idx for idx, label in enumerate(unique_labels)}  
+            inverse_mapping = {idx: label for label, idx in label_mapping.items()} 
+            
+            print(f"Label Mapping: {label_mapping}")
+            y = y.map(label_mapping)
+    
+            joblib.dump(inverse_mapping, "api/models/label_mapping.pkl")  
+ 
 
         joblib.dump(preprocessor, "api/models/preprocessor.pkl")
 

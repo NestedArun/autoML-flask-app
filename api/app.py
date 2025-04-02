@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify 
 import os
 import pandas as pd
 import joblib
@@ -103,11 +103,18 @@ def predict():
         prediction = model.predict(input_transformed)
 
         if model._estimator_type == "classifier":
-            label_mapping = {0: "Fail", 1: "Pass"}
-            prediction_labels = [label_mapping.get(pred, str(pred)) for pred in prediction]  # Safe mapping
+            label_mapping_path = os.path.join(MODEL_FOLDER, "label_mapping.pkl")
+
+            if os.path.exists(label_mapping_path):
+                label_mapping = joblib.load(label_mapping_path)
+            else:
+                return jsonify({"error": "Label mapping file missing!"}), 500
+
+            prediction_labels = [label_mapping.get(pred, str(pred)) for pred in prediction]
             return jsonify({"prediction": prediction_labels})
+
         else:  
-             return jsonify({"prediction": float(prediction[0])})  # Convert numpy output to float
+             return jsonify({"prediction": float(prediction[0])})  
 
 
     except Exception as e:
