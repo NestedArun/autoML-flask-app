@@ -5,42 +5,260 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Train Model</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #000000;  
+            background: -webkit-linear-gradient(to right, #000000, #1e3c72, #000000);  
+            background: linear-gradient(to right, #000000, #1e3c72, #000000); 
+            color: #e5e5e5; 
+            font-family: 'Consolas', 'Courier New', monospace; 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        
+        .container {
+            padding: 40px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        h2, #t {
+            color: #00ffff; 
+            text-align: center;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 20px;
+        }
+
+        .drop-area {
+            border: 2px dashed #00ffff; 
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            font-size: 18px;
+            color: #00ffff;
+            background-color: rgba(0, 0, 0, 0.4); 
+            transition: background-color 0.3s ease;
+        }
+
+        .drop-area:hover {
+            background-color: rgba(0, 0, 0, 0.6); 
+        }
+
+        .dragover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+
+        .form-control, .btn {
+            max-width: 500px;
+            margin: 10px auto;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid #444; 
+            color: #e5e5e5;
+            backdrop-filter: blur(8px); 
+        }
+
+        .form-control:focus, .btn:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ffff; 
+            border-color: #00ffff; 
+        }
+
+        .form-control::placeholder {
+            color: #00ffff; 
+            opacity: 1;
+        }
+
+        .btn {
+            background-color: #00ffff; 
+            color: #121212; 
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #00ff99;
+            color: #121212;
+            box-shadow: 0 0 10px #00ff99; 
+        }
+
+        .btn:active {
+            background-color: #ff00ff; 
+            color: #121212;
+        }
+
+        .alert {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5); 
+            border: 1px solid #ff00ff;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        #trainResult {
+            font-weight: bold;
+            color: #00ffff; 
+            text-align: center;
+        }
+
+        #modelInfo {
+            background-color: rgba(0, 0, 0, 0.5); 
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        #trainResult {
+            margin-top: 10px;
+        }
+
+        #predictButton {
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            width: 300px;
+            margin: 20px;
+            padding: 20px;
+            color: #00ffff;
+        }
+
+        .card-header {
+            color: #ff00ff; 
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .card-body {
+            color: #00ffff;
+        }
+
+        .card-footer {
+            text-align: center;
+            font-size: 14px;
+            color: #ff00ff; 
+        }
+
+        #mainCard {
+            width: 800px;
+            margin: 0;
+            transition: width 0.5s ease, margin 0.5s ease;
+        }
+
+        #trainDetailsCard {
+            display: none;
+            height: 430px;
+        }
+    </style>
 </head>
-<body class="container mt-5">
+<body>
 
-    <h2 class="text-center">Train Your Model</h2>
+    <div class="container">
+        <div class="card" id="mainCard">
+            <div class="card-body">
+                <h2>Train Your Model</h2>
+                <div class="drop-area" id="drop-area">
+                    <p>Drag & Drop Your CSV File Here</p>
+                    <p>OR</p>
+                    <input type="file" id="file" class="form-control" style="display:none;">
+                    <button id="chooseFileBtn" class="btn btn-info">Choose File</button>
+                </div>
+                <div class="text-center mt-4">
+                    <input type="text" id="target_column" class="form-control" placeholder="Enter target column name" required>
+                    <button type="submit" id="trainBtn" class="btn btn-primary mt-3">Train Model</button>
+                </div>
+                <p id="trainResult" class="mt-3 text-center"></p>
+            </div>
+        </div>
 
-    <form id="trainForm" class="text-center">
-        <input type="file" id="file" class="form-control" required>
-        <input type="text" id="target_column" class="form-control mt-2" placeholder="Enter target column name" required>
-        <button type="submit" class="btn btn-primary mt-3">Train Model</button>
-    </form>
-
-    <p id="trainResult" class="mt-3 text-center"></p>
-
-   
-
-    <div id="modelInfo" class="alert alert-info mt-3" style="display: none;">
-        <h4>Best Model Selected:</h4>
-        <p><strong>Model:</strong> <span id="bestModel"></span></p>
-        <p><strong>Score:</strong> <span id="modelScore"></span></p>
-    </div>
-
-    <div id="predictButton" class="text-center mt-4" style="display: none;">
-        <a href="/predict" class="btn btn-success">Go to Predict</a>
+        <div class="card" id="trainDetailsCard">
+            <div class="card-header">
+                <p id="t">Training Details</p>
+            </div>
+            <div class="card-body">
+                <h4>Best Model Selected:</h4>
+                <p><strong>Model:</strong> <span id="bestModel"></span></p>
+                <p><strong>Score:</strong> <span id="modelScore"></span></p>
+            </div>
+            <div class="card-footer">
+                <a href="/predict" class="btn btn-success">Go to Predict</a>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.getElementById("trainForm").addEventListener("submit", async function(event) {
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file');
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+        const trainBtn = document.getElementById('trainBtn');
+        const trainDetailsCard = document.getElementById('trainDetailsCard');
+        const mainCard = document.getElementById('mainCard');
+        const trainResult = document.getElementById('trainResult');
+
+        let fileName = '';
+
+        chooseFileBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileName = fileInput.files[0].name;
+                dropArea.innerHTML = `<p>File Selected: ${fileName}</p>`;
+            }
+        });
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileName = fileInput.files[0].name;
+                dropArea.innerHTML = `<p>File Selected: ${fileName}</p>`;
+            }
+        });
+
+        trainBtn.addEventListener('click', async function(event) {
             event.preventDefault();
 
+            if (!fileInput.files[0]) {
+                alert("Please select a file first!");
+                return;
+            }
+
+            if (!document.getElementById("target_column").value) {
+                alert("The target column should not be empty!");
+                return;
+            }
+
             let formData = new FormData();
-            formData.append("file", document.getElementById("file").files[0]);
+            formData.append("file", fileInput.files[0]);
             formData.append("target_column", document.getElementById("target_column").value);
 
-            let trainResult = document.getElementById("trainResult");
             trainResult.innerText = "Training in progress...";
-            trainResult.style.color = "blue";
+            trainResult.style.color = "#00ffff";
 
             try {
                 let response = await fetch("/train", {
@@ -52,20 +270,21 @@
 
                 if (response.ok) {
                     trainResult.innerText = "Training Completed!";
-                    trainResult.style.color = "green";
+                    trainResult.style.color = "#00ff99";
 
-                    document.getElementById("modelInfo").style.display = "block";
+                    trainDetailsCard.style.display = "block";
+                    mainCard.style.width = "650px";  
+                    mainCard.style.marginLeft = "50px";  
+
                     document.getElementById("bestModel").innerText = data.best_model;
                     document.getElementById("modelScore").innerText = data.score;
-
-                    document.getElementById("predictButton").style.display = "block";
                 } else {
                     trainResult.innerText = "Error in training: " + data.error;
-                    trainResult.style.color = "red";
+                    trainResult.style.color = "#ff073a";
                 }
             } catch (error) {
                 trainResult.innerText = "Unexpected error occurred!";
-                trainResult.style.color = "red";
+                trainResult.style.color = "ff073a";
                 console.error("Error:", error);
             }
         });
