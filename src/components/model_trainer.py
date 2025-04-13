@@ -9,7 +9,7 @@ from sklearn.metrics import r2_score, accuracy_score
 
 MODEL_FOLDER = "api/models"
 os.makedirs(MODEL_FOLDER, exist_ok=True)
-
+7
 class ModelTrainer:
     def __init__(self):
         self.models = {
